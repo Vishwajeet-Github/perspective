@@ -12,6 +12,7 @@
 
 import { execSync } from "child_process";
 import { build } from "@finos/perspective-esbuild-plugin/build.js";
+import { NodeModulesExternal } from "@finos/perspective-esbuild-plugin/external.js";
 import { PerspectiveEsbuildPlugin } from "@finos/perspective-esbuild-plugin";
 
 const IS_DEBUG =
