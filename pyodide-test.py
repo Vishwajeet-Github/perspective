@@ -8,7 +8,7 @@
 # This complains:
 # > RuntimeError: Package tags for /Users/tom/perspective/perspective/rust/target/wheels/perspective_python-3.0.3-cp39-abi3-emscripten_3_1_58_wasm32.whl
 # > don't match Python version in lockfile:Lockfile python 3.12on platform emscripten_3_1_58_wasm32 (cp312)
-# seems to dislike our use of cp39 ABI?
+# see: https://github.com/pyodide/pyodide-lock/pull/32
 
 import pytest
 from pytest_pyodide import run_in_pyodide
@@ -18,7 +18,6 @@ from pytest_pyodide import run_in_pyodide
 async def test_psp(selenium):
     import micropip
 
-    import asyncio
     import pytest
 
     await micropip.install(
@@ -30,8 +29,3 @@ async def test_psp(selenium):
     client = server.new_local_client()
     with pytest.raises(perspective.PerspectiveError):
         client.table("a,b,c\n1,2")
-
-
-@run_in_pyodide
-def test_add(selenium):
-    assert 1 + 1 == 2
