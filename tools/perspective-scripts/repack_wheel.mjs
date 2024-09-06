@@ -12,7 +12,11 @@
 
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
-import pkg from "../../package.json" assert { type: "json" };
+
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url)).slice(0, -1);
+const pkg = JSON.parse(
+    fs.readFileSync(__dirname + "../../package.json", { encoding: "utf-8" })
+);
 
 const wheel_file = fs.readdirSync(".").filter((x) => x.endsWith(".whl"))[0];
 execSync(`wheel unpack ${wheel_file}`);

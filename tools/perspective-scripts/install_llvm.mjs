@@ -10,7 +10,6 @@
 // ┃ of the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). ┃
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-import pkg from "../../package.json" assert { type: "json" };
 import os from "os";
 import * as fs from "node:fs";
 import * as url from "url";
@@ -19,6 +18,9 @@ import { execSync } from "child_process";
 import path from "path";
 
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url)).slice(0, -1);
+const pkg = JSON.parse(
+    fs.readFileSync(__dirname + "../../package.json", { encoding: "utf-8" })
+);
 
 const LLVM_VERSION = pkg.llvm;
 const DOWNLOAD_DIR = path.join(`${__dirname}/../../.llvm`, "llvm-toolchain");
