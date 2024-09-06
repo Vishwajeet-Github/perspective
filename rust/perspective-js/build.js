@@ -12,8 +12,9 @@
 
 import { execSync } from "child_process";
 import { build } from "@finos/perspective-esbuild-plugin/build.js";
-import { NodeModulesExternal } from "@finos/perspective-esbuild-plugin/external.js";
 import { PerspectiveEsbuildPlugin } from "@finos/perspective-esbuild-plugin";
+import { NodeModulesExternal } from "@finos/perspective-esbuild-plugin/external.js";
+import cpy from "cpy";
 
 const IS_DEBUG =
     !!process.env.PSP_DEBUG || process.argv.indexOf("--debug") >= 0;
