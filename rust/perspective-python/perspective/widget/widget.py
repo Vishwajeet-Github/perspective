@@ -11,15 +11,14 @@
 #  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 import base64
-import jinja2
 import logging
 import os
 import re
+import importlib
 
 from ipywidgets import DOMWidget
 from traitlets import Unicode, observe
-from ..viewer import PerspectiveViewer
-import importlib
+from .viewer import PerspectiveViewer
 
 __version__ = re.sub(
     "(rc|alpha|beta)", "-\\1.", importlib.metadata.version("perspective-python")
@@ -226,6 +225,8 @@ class PerspectiveWidget(DOMWidget, PerspectiveViewer):
                 session.close()
 
     def _repr_mimebundle_(self, **kwargs):
+        import jinja2
+
         super_bundle = super(DOMWidget, self)._repr_mimebundle_(**kwargs)
         if not _jupyter_html_export_enabled():
             return super_bundle
@@ -243,6 +244,7 @@ class PerspectiveWidget(DOMWidget, PerspectiveViewer):
         def psp_cdn(module, path=None):
             if path is None:
                 path = f"cdn/{module}.js"
+
             # perspective developer affordance: works with your local `pnpm run start blocks`
             # return f"http://localhost:8080/node_modules/@finos/{module}/dist/{path}"
             return f"https://cdn.jsdelivr.net/npm/@finos/{module}@{__version__}/dist/{path}"

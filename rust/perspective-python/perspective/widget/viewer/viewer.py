@@ -197,11 +197,11 @@ class PerspectiveViewer(PerspectiveTraitlets, object):
         if self.table is not None:
             self.reset()
 
-        if isinstance(data, perspective.Table):
+        if isinstance(data, perspective.perspective.Table):
             self._table = data
             self._client = data.get_client()
             name = self._table.get_name()
-        elif isinstance(data, perspective.View):
+        elif isinstance(data, perspective.perspective.View):
             raise TypeError(
                 "Views cannot be loaded directly, load a table or raw data instead"
             )

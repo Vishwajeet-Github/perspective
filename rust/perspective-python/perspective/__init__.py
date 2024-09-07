@@ -13,35 +13,19 @@
 __version__ = "3.0.3"
 __all__ = [
     "_jupyter_labextension_paths",
-    "PerspectiveError",
-    "PerspectiveWidget",
-    "PerspectiveViewer",
-    "PerspectiveTornadoHandler",
-    "ProxySession",
-    "Table",
-    "View",
     "Server",
     "Client",
+    "PerspectiveError",
+    "PerspectiveWidget",
+    "ProxySession",
 ]
 
 from .perspective import (
     Client as PySyncClient,
     PerspectiveError,
-    Table,
-    View,
     ProxySession,
     PySyncServer,
 )
-
-from .widget import PerspectiveWidget
-from .viewer import PerspectiveViewer
-
-# from .psp_cffi import ServerBase
-
-try:
-    from .handlers import PerspectiveTornadoHandler
-except ImportError:
-    ...
 
 
 def default_loop_cb(fn, *args, **kwargs):
@@ -49,9 +33,6 @@ def default_loop_cb(fn, *args, **kwargs):
 
 
 class Server(PySyncServer):
-    def set_threadpool_size(self, n_cpus):
-        pass
-
     def new_local_client(self, loop_callback=default_loop_cb):
         """Create a new `Client` instance bound to this in-process `Server`."""
         return Client.from_server(self, loop_callback)
