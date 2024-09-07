@@ -13,12 +13,10 @@
 import sh from "@finos/perspective-scripts/sh.mjs";
 
 // avoid executing this script directly, instead run `pnpm run test`.
-// process.cwd() is this directory under `pnpm run test` when run:
-// * from the top level, with this package selected in the build system
-// * from this directory
+// `pnpm run test` ensures this package's directory is process.cwd()
 
 if (process.env.PSP_PYODIDE) {
-    sh`pytest pyodide-tests/ --runner playwright --runtime chrome --dist-dir=$HOME/runtime/pyodide/0.27.0a2/`.runSync();
+    sh`pytest pyodide-tests/ --runner playwright --runtime chrome --dist-dir=$HOME/runtime/pyodide/0.26.2/`.runSync();
 } else {
     sh`pytest perspective/tests/`.runSync();
 }

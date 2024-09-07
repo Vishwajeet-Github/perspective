@@ -11,3 +11,4 @@
 #  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 # NOTE: To run the cpython test suite in pyodide:
+# pytest rust/perspective-python/perspective/tests --runner playwright --runtime chrome --dist-dir=$HOME/runtime/0.27.0a2/
