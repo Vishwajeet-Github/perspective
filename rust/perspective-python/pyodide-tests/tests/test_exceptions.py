@@ -10,19 +10,24 @@
 # > don't match Python version in lockfile:Lockfile python 3.12on platform emscripten_3_1_58_wasm32 (cp312)
 # see: https://github.com/pyodide/pyodide-lock/pull/32
 
-import pytest
 from pytest_pyodide import run_in_pyodide
+import pytest
+
+
+# @pytest.fixture(autouse=True)
+# async def setup_function(selenium):
+#     print("Installed wheel")
 
 
 @run_in_pyodide(packages=["micropip"])
-async def test_psp(selenium):
+async def test_bad_csv(selenium):
     import micropip
-
-    import pytest
 
     await micropip.install(
         "https://files.localhost/psp-wheels/perspective_python-3.0.3-cp39-abi3-emscripten_3_1_58_wasm32.whl"
     )
+    import pytest
+
     import perspective
 
     server = perspective.Server()
