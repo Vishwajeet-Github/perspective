@@ -10,31 +10,47 @@
 // ┃ of the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). ┃
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-import { execFileSync } from "node:child_process";
+// Pyodide information:
+// - Pyodide version we build against
+// - Pyodide dist directory
+
+import path from "node:path";
+import url from "node:url";
 import fs from "node:fs";
-import { getPyodideDistDir } from "@finos/perspective-scripts/pyodide.mjs";
 
-// avoid executing this script directly, instead run `pnpm run test` from the workspace root
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url)).slice(0, -1);
+const workspaceRoot = path.join(__dirname, "..", "..");
 
-const execOpts = { stdio: "inherit" };
-if (process.env.PSP_PYODIDE) {
-    const pyodideDistDir = getPyodideDistDir();
-    if (!fs.existsSync(pyodideDistDir)) {
-        console.error(
-            `Error: Pyodide distribution not found at ${pyodideDistDir}\n\nRun: node tools/perspective-scripts/install_pyodide.mjs\n\n`
-        );
-        process.exit(1);
+const memoize = (f) => {
+    let val = undefined;
+    return () => {
+        if (typeof val !== "undefined") return val;
+        val = f();
+        return val;
+    };
+};
+
+export const getPyodideVersion = memoize(() => {
+    const workspacePackageJson = path.join(workspaceRoot, "package.json");
+    const pyodideVersion = JSON.parse(
+        fs.readFileSync(workspacePackageJson)
+    ).pyodide;
+    if (!pyodideVersion) {
+        throw new Error(`"pyodide" not set in package.json`);
     }
-    execFileSync(
-        "pytest",
-        [
-            "pyodide-tests/",
-            "--runner=playwright",
-            "--runtime=chrome",
-            `--dist-dir=${pyodideDistDir}`,
-        ],
-        execOpts
+    return pyodideVersion;
+});
+
+export function getPyodideDownloadDir() {
+    return path.join(
+        workspaceRoot,
+        "rust",
+        "target",
+        "pyodide",
+        getPyodideVersion()
     );
-} else {
-    execFileSync("pytest", ["perspective/tests"], execOpts);
+}
+
+export function getPyodideDistDir() {
+    return path.join(getPyodideDownloadDir(), "pyodide");
 }

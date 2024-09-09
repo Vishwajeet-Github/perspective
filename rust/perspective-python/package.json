@@ -15,8 +15,8 @@
         "test": "node test.mjs"
     },
     "devDependencies": {
-        "cpy": "^9.0.1",
-        "@finos/perspective-scripts": "workspace:*"
+        "@finos/perspective-scripts": "workspace:*",
+        "cpy": "^9.0.1"
     },
     "dependencies": {
         "@finos/perspective-jupyterlab": "workspace:*"

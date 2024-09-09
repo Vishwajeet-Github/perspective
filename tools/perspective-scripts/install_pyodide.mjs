@@ -10,31 +10,48 @@
 // ┃ of the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). ┃
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-import { execFileSync } from "node:child_process";
+// Download a full Pyodide distribution from github and extract it to rust/target dir for
+// use in integration tests
+
+import { getPyodideVersion, getPyodideDownloadDir } from "./pyodide.mjs";
+
+import assert from "node:assert";
 import fs from "node:fs";
-import { getPyodideDistDir } from "@finos/perspective-scripts/pyodide.mjs";
+import path from "node:path";
 
-// avoid executing this script directly, instead run `pnpm run test` from the workspace root
+import { execFileSync } from "node:child_process";
+const pyodideVersion = getPyodideVersion();
 
-const execOpts = { stdio: "inherit" };
-if (process.env.PSP_PYODIDE) {
-    const pyodideDistDir = getPyodideDistDir();
-    if (!fs.existsSync(pyodideDistDir)) {
-        console.error(
-            `Error: Pyodide distribution not found at ${pyodideDistDir}\n\nRun: node tools/perspective-scripts/install_pyodide.mjs\n\n`
+function downloadPyodide() {
+    const pyodideUrl = `https://github.com/pyodide/pyodide/releases/download/${pyodideVersion}/pyodide-${pyodideVersion}.tar.bz2`;
+    const downloadDir = getPyodideDownloadDir(); // the download dir is versioned
+    const tarball = path.join(downloadDir, `pyodide-${pyodideVersion}.tar.bz2`);
+    const buildStamp = path.join(downloadDir, "psp-build-stamp.txt");
+    const pyodideLock = path.join(downloadDir, "pyodide", "pyodide-lock.json");
+    if (fs.existsSync(buildStamp) && fs.existsSync(pyodideLock)) {
+        console.log(
+            `Pyodide ${pyodideVersion} already extracted to ${downloadDir}`
         );
-        process.exit(1);
+    } else {
+        fs.rmSync(buildStamp, { force: true });
+        console.log(
+            `Downloading Pyodide ${pyodideVersion} from ${pyodideUrl}...`
+        );
+        fs.mkdirSync(downloadDir, { recursive: true });
+        execFileSync("wget", ["-O", tarball, pyodideUrl], {
+            stdio: "inherit",
+        });
+        console.log(`Extracting ${tarball}...`);
+        execFileSync("tar", ["-xvf", tarball, "-C", downloadDir], {
+            stdio: "inherit",
+        });
+        console.log(`Removing ${tarball}...`);
+        fs.rmSync(tarball);
+        // assert presence of a known file
+        assert(fs.existsSync(pyodideLock), `${pyodideLock} not found`);
+        console.log(`Extracted to ${downloadDir}`);
+        fs.writeFileSync(buildStamp, ""); // prevent re-download/extract
     }
-    execFileSync(
-        "pytest",
-        [
-            "pyodide-tests/",
-            "--runner=playwright",
-            "--runtime=chrome",
-            `--dist-dir=${pyodideDistDir}`,
-        ],
-        execOpts
-    );
-} else {
-    execFileSync("pytest", ["perspective/tests"], execOpts);
 }
+
+downloadPyodide();

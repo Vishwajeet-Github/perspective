@@ -34,27 +34,18 @@ def psp_wheel_url():
         yield wheel_url
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 @run_in_pyodide(packages=["micropip"])
 async def psp_installed(selenium, psp_wheel_url):
     """Installs perspective wheel from rust/target/wheels dir using micropip"""
+    # Autoused, so every test has perspective installed without them explicitly listing it as a fixture
     import micropip
 
     await micropip.install(psp_wheel_url)
 
 
-# XXX(tom): doesn't work, pickle problems
-@pytest.fixture()
 @run_in_pyodide
-def local_client(selenium, psp_installed):
-    import perspective
-
-    server = perspective.Server()
-    yield server.new_local_client()
-
-
-@run_in_pyodide
-async def test_parsing_bad_csv_raises_exception(selenium, psp_installed):
+async def test_parsing_bad_csv_raises_exception(selenium):
     import pytest
     import perspective
 
@@ -66,7 +57,7 @@ async def test_parsing_bad_csv_raises_exception(selenium, psp_installed):
 
 
 @run_in_pyodide
-async def test_parsing_good_csv(selenium, psp_installed):
+async def test_parsing_good_csv(selenium):
     import perspective
 
     server = perspective.Server()
