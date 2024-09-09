@@ -218,7 +218,7 @@ runs:
 
         - name: Install Python Pyodide dependencies
           shell: bash
-          run: python -m pip install -r rust/perspective-python/requirements.txt
+          run: python -m pip install -r rust/perspective-python/requirements-pyodide.txt
           if: ${{ inputs.pyodide == 'true' }}
 
         - name: Install Pyodide distribution
