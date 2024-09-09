@@ -64,3 +64,8 @@ async def test_parsing_good_csv(selenium):
     client = server.new_local_client()
     abc123 = client.table("a,b,c\n1,2,3\n")
     assert abc123.columns() == ["a", "b", "c"]
+
+
+@run_in_pyodide
+async def test_bad_test(selenium):
+    assert False
