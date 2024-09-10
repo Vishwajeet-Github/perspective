@@ -18,22 +18,24 @@ import path from "node:path";
 
 import { getWorkspacePackageJson, getRustTargetDir } from "./workspace.mjs";
 
-export const getPyodideVersion = memoize(() => {
+export function getPyodideVersion() {
     const pyodideVersion = getWorkspacePackageJson().pyodide;
     if (!pyodideVersion) {
         throw new Error(`"pyodide" not set in package.json`);
     }
     return pyodideVersion;
-});
+}
 
 /**
- *
  * @returns pyodide download directory for the current version
  */
 export function getPyodideDownloadDir() {
     return path.join(getRustTargetDir(), "pyodide", getPyodideVersion());
 }
 
+/**
+ * @returns pyodide dist directory for the current version
+ */
 export function getPyodideDistDir() {
     return path.join(getPyodideDownloadDir(), "pyodide");
 }
