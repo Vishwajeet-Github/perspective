@@ -13,6 +13,7 @@
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { getPyodideDistDir } from "@finos/perspective-scripts/pyodide.mjs";
+import { getEmscriptenWheelPath } from "@finos/perspective-scripts/workspace.mjs";
 
 // avoid executing this script directly, instead run `pnpm run test` from the workspace root
 
@@ -25,6 +26,13 @@ if (process.env.PSP_PYODIDE) {
         );
         process.exit(1);
     }
+    const emscriptenWheel = getEmscriptenWheelPath();
+    if (!fs.existsSync(emscriptenWheel)) {
+        console.error(
+            `Error: Emscripten wheel not found at ${emscriptenWheel}\n\nRun: pnpm run build\n\n`
+        );
+        process.exit(1);
+    }
     execFileSync(
         "pytest",
         [
@@ -32,6 +40,7 @@ if (process.env.PSP_PYODIDE) {
             "--runner=playwright",
             "--runtime=chrome",
             `--dist-dir=${pyodideDistDir}`,
+            `--perspective-emscripten-wheel=${emscriptenWheel}`,
         ],
         execOpts
     );

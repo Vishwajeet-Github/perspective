@@ -14,23 +14,31 @@
 # for several reasons.
 # One: https://github.com/pyodide/pytest-pyodide/issues/81
 
-# may need to also `pythom -m playwright install chrome`
-
 from pytest_pyodide import run_in_pyodide, spawn_web_server
 import pytest
+
+
+@pytest.fixture(scope="session")
+def psp_wheel_path(pytestconfig):
+    wheel = pytestconfig.getoption("--perspective-emscripten-wheel")
+    if wheel is None:
+        raise RuntimeError(
+            "pytest option --perspective-emscripten-wheel=<WHEEL> is required but wasn't specified"
+        )
+    return wheel
 
 
 # Based on micropip's test server fixture:
 # https://github.com/pyodide/micropip/blob/eb8c4497d742e515d24d532db2b9cc014328265b/tests/conftest.py#L64-L87
 @pytest.fixture()
-def psp_wheel_url():
+def psp_wheel_url(psp_wheel_path):
     from pathlib import Path
 
-    wheels_dir = Path(__file__).parent / "../../../../rust/target/wheels"
+    wheel = Path(psp_wheel_path)
+    wheels_dir = wheel.parent
     with spawn_web_server(wheels_dir) as server:
         host, port, _ = server
-        # XXX(tom): fix url to not be hardcoded
-        wheel_url = f"http://{host}:{port}/perspective_python-3.0.3-cp39-abi3-emscripten_3_1_58_wasm32.whl"
+        wheel_url = f"http://{host}:{port}/{wheel.name}"
         yield wheel_url
 
 
@@ -64,8 +72,3 @@ async def test_parsing_good_csv(selenium):
     client = server.new_local_client()
     abc123 = client.table("a,b,c\n1,2,3\n")
     assert abc123.columns() == ["a", "b", "c"]
-
-
-@run_in_pyodide
-async def test_bad_test(selenium):
-    assert False
