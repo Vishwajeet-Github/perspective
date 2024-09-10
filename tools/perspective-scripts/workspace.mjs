@@ -45,9 +45,9 @@ export function getEmscriptenWheelPath() {
         `perspective_python-${pspVersion}-${wheeljunk}.whl`
     );
 }
-export const getWorkspacePackageJson = memoize(() => {
-    const json = JSON.parse(
-        fs.readFileSync(path.join(workspaceRoot, "package.json"))
-    );
-    return json;
-});
+/**
+ * @returns memoized, deserialized contents of workspace package.json
+ */
+export const getWorkspacePackageJson = memoize(() =>
+    JSON.parse(fs.readFileSync(path.join(workspaceRoot, "package.json")))
+);

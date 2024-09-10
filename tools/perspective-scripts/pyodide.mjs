@@ -18,15 +18,6 @@ import path from "node:path";
 
 import { getWorkspacePackageJson, getRustTargetDir } from "./workspace.mjs";
 
-const memoize = (f) => {
-    let val = undefined;
-    return () => {
-        if (typeof val !== "undefined") return val;
-        val = f();
-        return val;
-    };
-};
-
 export const getPyodideVersion = memoize(() => {
     const pyodideVersion = getWorkspacePackageJson().pyodide;
     if (!pyodideVersion) {
