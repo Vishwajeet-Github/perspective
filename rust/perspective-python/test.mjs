@@ -22,7 +22,7 @@ if (process.env.PSP_PYODIDE) {
     const pyodideDistDir = getPyodideDistDir();
     if (!fs.existsSync(pyodideDistDir)) {
         console.error(
-            `Error: Pyodide distribution not found at ${pyodideDistDir}\n\nRun: node tools/perspective-scripts/install_pyodide.mjs\n\n`
+            `Error: Pyodide distribution not found at ${pyodideDistDir}\n\nRun: pnpm -w run install_pyodide\n\n`
         );
         process.exit(1);
     }

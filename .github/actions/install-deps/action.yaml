@@ -223,7 +223,7 @@ runs:
 
         - name: Install Pyodide distribution
           shell: bash
-          run: node tools/perspective-scripts/install_pyodide.mjs
+          run: pnpm run install_pyodide
           if: ${{ inputs.pyodide == 'true' }}
 
         - name: Install Python Playwright browsers
