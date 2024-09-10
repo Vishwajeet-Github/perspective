@@ -15,7 +15,7 @@ import os from "os";
 import fs from "fs";
 import * as dotenv from "dotenv";
 import sh from "./sh.mjs";
-import { getWorkspacePackageJson } from "./workspace.mjs";
+import { getWorkspaceRoot, getWorkspacePackageJson } from "./workspace.mjs";
 
 const pkg = getWorkspacePackageJson();
 
@@ -26,7 +26,7 @@ dotenv.config({
 });
 
 function base() {
-    return sh.path`${__dirname}/../../.emsdk`;
+    return sh.path`${getWorkspaceRoot()}/.emsdk`;
 }
 
 function emsdk_checkout() {
