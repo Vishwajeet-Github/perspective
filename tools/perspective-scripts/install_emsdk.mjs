@@ -15,10 +15,9 @@ import os from "os";
 import fs from "fs";
 import * as dotenv from "dotenv";
 import sh from "./sh.mjs";
-import * as url from "url";
+import { getWorkspacePackageJson } from "./workspace.mjs";
 
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url)).slice(0, -1);
-const pkg = JSON.parse(fs.readFileSync(`${__dirname}/../../package.json`));
+const pkg = getWorkspacePackageJson();
 
 const emscripten = pkg.emscripten;
 
