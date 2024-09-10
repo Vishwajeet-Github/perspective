@@ -20,7 +20,7 @@ import { getWorkspaceRoot, getWorkspacePackageJson } from "./workspace.mjs";
 const pkg = getWorkspacePackageJson();
 
 const LLVM_VERSION = pkg.llvm;
-const DOWNLOAD_DIR = path.join(`${getWorkspaceRoot()}/.llvm`, "llvm-toolchain");
+const DOWNLOAD_DIR = path.join(getWorkspaceRoot(), ".llvm", "llvm-toolchain");
 
 function getLLVMPackageName() {
     const system = os.platform();
